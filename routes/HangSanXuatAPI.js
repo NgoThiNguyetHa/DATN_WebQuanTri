@@ -65,7 +65,6 @@ router.delete('/deleteHangSanXuat/:id', async (req,res) => {
   }
 })
 
-
 router.put("/updateHangSanXuat/:id", async (req, res ) => {
   try{
     const data = await HangSanXuat.findByIdAndUpdate(req.params.id, req.body, {new: true})
