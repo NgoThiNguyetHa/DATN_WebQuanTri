@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        .borderColor {
+            border: 1px solid #EEEEEE;
+        }
+
+        .btnEdit {
+            background: none;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div id="sidebar">
+        <% include menu.ejs %>
+    </div>
+    <div class="main">
+        <nav class="navbar navbar-expand px-3 border-bottom" id="navigation">
+            <div style="display: flex;">
+                <button class="btn" type="button" data-bs-theme="dark">
+                    <span><i class="fa-solid fa-bars" style="color: #000000;"></i></span>
+                </button>
+                <div class="btn"><span style="font-weight: bold; font-size: 20px">Quản lý đánh giá</span></div>
+
+            </div>
+            <div id="account">
+                <% if (typeof account !== 'undefined' ) { %>
+                    <span style="display: none" id="accountInfo"><%= JSON.stringify(account) %></span>
+                    <p style="color: black; font-weight: bold">
+                        Welcome, <%= account.username %>!
+                    </p>
+                <% } %>
+                <span><i class="fa-solid fa-circle-user" style="font-size: 25px"></i></span>
+            </div>
+        </nav>
+        <main class="content px-3 py-2">
+            <div class="content" id="mainContent">
+
+
+                <div class="tab-content d-flex row justify-content-center">
+
+                    <div class="flex-row d-flex flex-row my-2">
+                        <form method="GET" action="/quanLyDanhGiaW/searchDanhGia"
+                              class="d-flex justify-content-between flex-fill">
+
+                            <input type="number" name="diemDanhGia" class="m-1 form-control "
+                                   placeholder="Nhập điểm đánh giá"/>
+                            <input type="text" name="sanPham" class="m-1 form-control "
+                                   placeholder="Nhập tên sản phẩm"/>
+                            <input type="date" name="ngayDanhGia" class="m-1 form-control "/>
+
+                            <input type="text" name="noiDung" class="m-1 form-control "
+                                   placeholder="Nhập nội dung"/>
+                            <input type="text" name="tenKhachHang" class="m-1 form-control "
+                                   placeholder="Nhập tên khách hàng"/>
+
+                            <button class="btn-dark m-1 btn d-flex flex-row col-auto" type="submit" value="submit">
+                                <span class=""><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <span class="d-inline">Tìm Kiếm</span>
+                            </button>
+                        </form>
+
+                    </div>
+
+                    <div class="tab-content d-flex col align-content-center m-1">
+                        <span class="fw-bold">Tổng số đánh giá: &nbsp; </span>
+                        <span><%= data.length %></span>
+                    </div>
+                    <div class="tab-content d-flex row justify-content-center">
+                        <table class="table text-break table-bordered">
+                            <thead>
+                            <tr class="bg-secondary bg-opacity-50 text-bg-info">
+                                <th scope="col" class="col-1 borderColor"
+                                    style="background-color: #dcdada; text-align: center">STT
+                                </th>
+                                <th scope="col" class="col-2 borderColor"
+                                    style="background-color: #dcdada; text-align: center">Tên khách hàng
+                                </th>
+                                <th scope="col" class="col-3 borderColor"
+                                    style="background-color: #dcdada; text-align: center">Sản phẩm
+                                </th>
+                                <th scope="col" class="col-2 borderColor"
+                                    style="background-color: #dcdada; text-align: center">Nội dung
+                                </th>
+                                <th scope="col" class="col-1 borderColor"
+                                    style="background-color: #dcdada; text-align: center">Điểm
+                                </th>
+                                <th scope="col" class="col-2 borderColor"
+                                    style="background-color: #dcdada; text-align: center">Ngày đánh giá
+                                </th>
+                                <th scope="col" class="col-1 borderColor" style="background-color: #dcdada;"></th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% for(var i = 0; i < data.length; i++){ %>
+                                <tr>
+                                    <td scope="row"><%= i + 1 %></td>
+                                    <td><%= data[i].idKhachHang.username %></td>
+                                    <td><%= data[i].idChiTietDienThoai.maDienThoai.tenDienThoai %> <%= data[i].idChiTietDienThoai.maRam.RAM %>
+                                        GB/<%= data[i].idChiTietDienThoai.maDungLuong.boNho %>GB
+                                    </td>
+                                    <td style="max-width: 30px;white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><%= data[i].noiDung %></td>
+                                    <td><%= data[i].diemDanhGia %></td>
+                                    <td>
+                                        <%= data[i].ngayTao %>
+                                    </td>
+                                    <td>
+                                        <button
+                                                onclick="detailDanhGia(event, '<%= JSON.stringify(data[i]) %>')"
+                                                class="btnEdit"
+                                        >
+                                            <span class="" id="editIcon"><i
+                                                        class="fa-solid fa-clipboard-list"></i></span>
+                                        </button>
+                                        <button
+                                                onclick="deleteDanhGia(event, '<%= data[i]._id %>')"
+                                                class="btnEdit"
+                                        >
+                                            <span class="" id="editIcon"><i class="fa-regular fa-trash-can"></i></span>
+                                        </button>
+                                    </td>
+
+                                </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="addNewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewModalLabel">Chi Tiết Đánh Giá</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detailContent">
+
+                    <!-- Nội dung chi tiết đơn hàng sẽ được thay đổi thông qua JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  const toggler = document.querySelector(".btn");
+  toggler.addEventListener("click", function () {
+    document.querySelector("#sidebar").classList.toggle("collapsed");
+  });
+
+  function reloadPage() {
+    window.location.reload();
+  }
+
+  function detailDanhGia(event, data) {
+    const danhGia = JSON.parse(data);
+    const diemDanhGia = parseInt(danhGia.diemDanhGia);
+    let stars = '';
+
+    // Thêm số sao tương ứng với điểm đánh giá
+    for (let i = 0; i < diemDanhGia; i++) {
+      stars += '<i class="fas fa-star" style="color: #ffa100;"></i>';
+    }
+
+    // Thêm số sao trắng
+    for (let i = diemDanhGia; i < 5; i++) {
+      stars += '<i class="far fa-star" style="color: #ffa100"></i>';
+    }
+
+    let detailContent = '';
+    detailContent += `
+        <div class="d-flex flex-row col-auto gap-4 mb-3">
+            <div>
+              <i class="fa-solid fa-circle-user" style="font-size: 40px; color: #d2cece"></i>
+            </div>
+            <div class="d-flex justify-content-between" style="flex: auto">
+              <div>
+                <strong>${danhGia.idKhachHang.username}</strong> <br>
+                <span style="font-size: 15px; color: #888888">
+                    Phân loại: ${danhGia.idChiTietDienThoai.maDienThoai.tenDienThoai}
+                    ${danhGia.idChiTietDienThoai.maRam.RAM}GB/${danhGia.idChiTietDienThoai.maDungLuong.boNho}GB,
+                    ${danhGia.idChiTietDienThoai.maMau.tenMau}
+                </span>
+              </div>
+              <div>
+                ${stars}
+              </div>
+            </div>
+        </div>
+        <div class="d-flex flex-row col-auto gap-3">
+            <div class="col-2">
+              <img src="${danhGia.hinhAnh}" class="img-fluid" alt="Product Image">
+            </div>
+            <div class="col-10">
+              <span>
+                <span>${danhGia.noiDung}</span> <br>
+                <span style="font-size: 15px; color: #888888">
+                    ${danhGia.ngayTao}
+                </span>
+              </span>
+            </div>
+        </div>
+    `
+
+    document.getElementById('detailContent').innerHTML = detailContent;
+    // Hiển thị modal detail
+    const modal = new bootstrap.Modal(document.getElementById('detailModal'), {
+      keyboard: false
+    });
+    modal.show();
+  }
+
+  function deleteDanhGia(event, id) {
+    const isConfirmed = confirm("Bạn có chắc chắn muốn xóa đánh giá này?");
+
+    if (isConfirmed) {
+      fetch(`/danhgias/deleteDanhGia/${id}`, { method: 'DELETE' })
+          .then(response => {
+              if (response.ok) {
+                localStorage.setItem('deleteSuccess', true);
+                window.location.reload();
+              } else {
+                localStorage.setItem('deleteSuccess', false);
+                  throw new Error('Xóa đánh giá không thành công');
+              }
+          })
+          .catch(error => {
+              console.error('Lỗi:', error);
+          });
+
+
+    }
+  }
+
+  function showDeleteSuccessMessage() {
+    const deleteSuccess = localStorage.getItem('deleteSuccess');
+
+    if (deleteSuccess) {
+      alert("Đánh giá đã được xóa!");
+      localStorage.removeItem('deleteSuccess');
+    }
+  }
+
+  window.addEventListener('load', showDeleteSuccessMessage);
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        *,
+        ::after,
+        ::before {
+            box-sizing: border-box;
+        }
+
+        h3 {
+            font-size: 1.2375rem;
+            color: #000000;
+        }
+
+        a {
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            color: black;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        /* Layout skeleton */
+
+        .wrapper {
+            align-items: stretch;
+            display: flex;
+            width: 100%;
+        }
+
+        #sidebar {
+            max-width: 264px;
+            min-width: 264px;
+            transition: all 0.35s ease-in-out;
+            box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5);
+            z-index: 1111;
+        }
+
+        /* Sidebar collapse */
+
+        #sidebar.collapsed {
+            margin-left: -264px;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            transition: all 0.35s ease-in-out;
+        }
+
+        .sidebar-logo {
+            padding: 1.15rem 1.5rem;
+        }
+
+        .sidebar-logo a {
+            color: #000000;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            padding: 0;
+        }
+
+        .sidebar-header {
+            color: #000000;
+            font-size: .75rem;
+            padding: 1.5rem 1.5rem .375rem;
+        }
+
+        a.sidebar-link {
+            padding: .625rem 1.625rem;
+            color: #000000;
+            position: relative;
+            display: block;
+            font-size: 1rem;
+        }
+
+        .sidebar-link[data-bs-toggle="collapse"]::after {
+            border: solid;
+            border-width: 0 .075rem .075rem 0;
+            content: "";
+            display: inline-block;
+            padding: 2px;
+            position: absolute;
+            right: 1.5rem;
+            top: 1.4rem;
+            transform: rotate(-135deg);
+            transition: all .2s ease-out;
+        }
+
+        .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+            transform: rotate(45deg);
+            transition: all .2s ease-out;
+        }
+
+        .content {
+            flex: 1;
+            max-width: 100vw;
+            width: 100vw;
+        }
+        i{
+            width: 25px;
+        }
+        #navigation{
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #account{
+            display: flex;
+            gap: 10px;
+            margin-right: 20px;
+        }
+        #account p{
+            margin: 0;
+        }
+        .selected {
+            background-color: #d2d2d2;
+            margin-left: 10px;
+            margin-right: 10px;
+            border-radius: 15px;
+        }
+        /* Responsive */
+        @media (min-width: 768px) {
+            .content {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside >
+        <div class="h-100">
+            <div class="sidebar-logo">
+                <a href="http://localhost:8686/quanLyDienThoaiW">PhoneHouse</a>
+            </div>
+            <!-- Sidebar Navigation -->
+            <ul class="sidebar-nav">
+
+                <!-- Cửa hàng  -->
+                <li class="sidebar-header">
+                    Cửa hàng
+                </li>
+                <li class="sidebar-item">
+                    <a  class="sidebar-link" href="http://localhost:8686/quanLyDienThoaiW">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        Quản Lý Điện Thoại
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="http://localhost:8686/quanLyDonHangW" class="sidebar-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        Quản Lý Đơn Hàng
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="http://localhost:8686/quanLyHangSanXuatW" class="sidebar-link">
+                        <i class="fa-brands fa-bandcamp"></i>
+                        Thông Tin Điện Thoại
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="http://localhost:8686/quanLyUuDaiW" class="sidebar-link">
+                        <i class="fa-solid fa-ticket"></i>
+                        Quản Lý Ưu Đãi
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="http://localhost:8686/thongKeW" class="sidebar-link">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Thống Kê
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="http://localhost:8686/quanLyDanhGiaW" class="sidebar-link">
+                        <i class="fa-solid fa-comment"></i>
+                        Quản Lý Đánh Giá
+                    </a>
+                </li>
+
+                <!-- Hệ thống  -->
+                <li class="sidebar-header">
+                    Hệ thống
+                </li>
+                <li class="sidebar-item">
+                    <a href="http://localhost:8686/cuaHangLienKetW" class="sidebar-link">
+                        <i class="fa-solid fa-store"></i>
+                        Cửa Hàng Liên Kết
+                    </a>
+                </li>
+
+                <!-- Tài khoản  -->
+                <li class="sidebar-header">
+                    Tài khoản
+                </li>
+                <li class="sidebar-item">
+                    <a href="http://localhost:8686/doiMatKhauW" class="sidebar-link">
+                        <i class="fa-solid fa-lock"></i>
+                        Thông tin cá nhân
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a
+                            onclick="handleLogout(event)"
+                            href="#"
+                            class="sidebar-link" >
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        Đăng Xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+<script>
+
+
+  function handleLogout(event) {
+    event.preventDefault();
+
+    const confirmLogout = confirm("Bạn có chắc chắn muốn đăng xuất?");
+
+    // Xử lý khi người dùng xác nhận đăng xuất
+    if (confirmLogout) {
+      // Thực hiện đăng xuất (chuyển hướng hoặc gọi API đăng xuất)
+      window.location.href = "http://localhost:8686/dangNhapW";
+    }
+  }
+
+  // const sidebarItems = document.querySelectorAll('.sidebar-item');
+  // //set màu cho item menu khi được chọn
+  // sidebarItems.forEach(item => {
+  //   item.addEventListener('click', function() {
+  //     // Loại bỏ tất cả các lớp đã chọn trước đó
+  //     sidebarItems.forEach(item => {
+  //       item.classList.remove('selected');
+  //     });
+  //
+  //     // Thêm lớp đã chọn cho mục được nhấp
+  //     this.classList.add('selected');
+  //   });
+  // });
+
+  // const account = document.getElementById("accountInfo");
+  // if (account) {
+  //   const accountValue = JSON.parse(account.textContent || "{}");
+  //   localStorage.setItem("loggedInAccount", JSON.stringify(accountValue));
+  // }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        .content {
+            display: flex;
+            gap: 10px;
+        }
+
+        .box {
+            flex: 1;
+            height: 500px;
+            border-radius: 5px;
+            background-color: #f4f5f7;
+            margin-top: 10px;
+            padding: 15px;
+        }
+
+        .borderColor {
+            border: 1px solid #dedede;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 0;
+            border-bottom: 1px solid #dedede;
+            margin-bottom: 10px;
+        }
+
+        .header button {
+            background-color: white;
+            border: 1px solid #dedede;
+            padding: 0;
+            height: 25px;
+            border-radius: 5px;
+        }
+
+        .header p {
+            font-weight: bold;
+        }
+
+        .item {
+            border: 1px solid #dedede;
+            background-color: white;
+            display: flex;
+            margin: 8px 0;
+            padding: 10px 8px;
+            border-radius: 8px;
+            gap: 15px;
+        }
+
+        .list {
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+
+        .icon {
+
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon i {
+            font-size: 25px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            background-color: #f4f5f7;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #f4f5f7;
+        }
+
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px #f4f5f7;
+            background-color: #f4f5f7;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div id="sidebar">
+        <% include menu.ejs %>
+    </div>
+    <div class="main">
+        <nav class="navbar navbar-expand px-3 border-bottom" id="navigation">
+            <div style="display: flex;">
+                <button class="btn" type="button" data-bs-theme="dark">
+                    <span><i class="fa-solid fa-bars" style="color: #000000;"></i></span>
+                </button>
+                <div class="btn"><span style="font-weight: bold; font-size: 20px">Quản lý thông tin điện thoại</span></div>
+
+            </div>
+            <div id="account">
+                <% if (typeof account !== 'undefined' ) { %>
+                    <span style="display: none" id="accountInfo"><%= JSON.stringify(account) %></span>
+                    <p style="color: black; font-weight: bold">
+                        Welcome, <%= account.username %>!
+                    </p>
+                <% } %>
+                <span><i class="fa-solid fa-circle-user" style="font-size: 25px"></i></span>
+            </div>
+        </nav>
+
+        <div class="flex-row d-flex flex-row px-3 py-2">
+            <form method="GET" action="/quanLyHangSanXuatW/searchThongSo"
+                  class="d-flex justify-content-between flex-fill">
+                <div>
+                    <div class="d-flex flex-row">
+                        <input type="text" name="tenHang" class="m-1 form-control "
+                               placeholder="Nhập hãng sản xuất"/>
+                        <input type="text" name="tenMau" class="m-1 form-control "
+                               placeholder="Nhập màu"/>
+                        <!--                    </div>-->
+                        <!--                    <div class="d-flex flex-row">-->
+                        <input type="text" name="boNho" class="m-1 form-control "
+                               placeholder="Nhập dung lượng"/>
+                        <input type="text" name="RAM" class="m-1 form-control "
+                               placeholder="Nhập RAM"/>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn-dark m-1 btn d-flex flex-row col-auto" type="submit" value="submit">
+                        <span class=""><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <span class="d-inline">Tìm Kiếm</span>
+                    </button>
+                </div>
+            </form>
+
+<!--            <form>-->
+<!--                <button class="btn-dark m-1 btn d-flex flex-row col-auto" type="submit" value="submit">-->
+<!--                    <span class=""><i class="fa-solid fa-plus"></i></span>-->
+<!--                    <span class="d-inline">Thêm Mới</span>-->
+<!--                </button>-->
+<!--            </form>-->
+        </div>
+
+
+        <main class="content px-3 py-2">
+            <div class="content" id="mainContent">
+                <div class="content">
+                    <div class="box borderColor">
+                        <div class="header">
+                            <p>Hãng sản xuất</p>
+                            <button onclick="addHangSanXuatModal()"><i class="fa-solid fa-plus" style="color: #000000;"></i></button>
+                        </div>
+                        <div class="list">
+                            <% for(var i = 0; i < hangsanxuats.length; i++){ %>
+                                <div class="item" onclick="editHangSXModal('<%= hangsanxuats[i]._id %>', '<%= hangsanxuats[i].hinhAnh %>', '<%= hangsanxuats[i].tenHang %>')">
+                                    <img src="<%= hangsanxuats[i].hinhAnh %>" width="30px" height="30px"
+                                         style="border-radius: 20px"/>
+                                    <td><%= hangsanxuats[i].tenHang %></td>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="box borderColor">
+                        <div class="header">
+                            <p>Màu</p>
+                            <button onclick="addMauModal()"><i class="fa-solid fa-plus" style="color: #000000;"></i></button>
+                        </div>
+                        <div class="list">
+                            <% for(var i = 0; i < maus.length; i++){ %>
+                                <div class="item" onclick="editMauModal('<%= maus[i]._id %>', '<%= maus[i].tenMau %>')">
+                                    <div class="icon">
+                                        <i class="fa-solid fa-palette" style="color: #000000;"></i>
+                                    </div>
+                                    <td><%= maus[i].tenMau %></td>
+                                </div>
+                            <% } %>
+                        </div>
+
+                    </div>
+
+                    <div class="box borderColor">
+                        <div class="header">
+                            <p>Dung lượng</p>
+                            <button onclick="addDungLuongModal()"><i class="fa-solid fa-plus" style="color: #000000;"></i></button>
+                        </div>
+                        <div class="list">
+                            <% for(var i = 0; i < dungluongs.length; i++){ %>
+                                <div class="item" onclick="editDungLuongModal('<%= dungluongs[i]._id %>', '<%= dungluongs[i].boNho %>')">
+                                    <div class="icon">
+                                        <i class="fa-solid fa-sd-card" style="color: #000000;"></i>
+                                    </div>
+                                    <td><%= dungluongs[i].boNho %> GB</td>
+                                </div>
+                            <% } %>
+                        </div>
+
+                    </div>
+
+                    <div class="box borderColor">
+                        <div class="header">
+                            <p>RAM</p>
+                            <button onclick="addRamModal()"><i class="fa-solid fa-plus" style="color: #000000;"></i></button>
+                        </div>
+                        <div class="list">
+                            <% for(var i = 0; i < rams.length; i++){ %>
+                                <div class="item" onclick="editRamModal('<%= rams[i]._id %>', '<%= rams[i].RAM %>')">
+                                    <div class="icon">
+                                        <i class="fa-solid fa-memory" style="color: #000000;"></i>
+                                    </div>
+                                    <td><%= rams[i].RAM %> GB</td>
+                                </div>
+                            <% } %>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<!--Modal-->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-header">
+<!--                <h5 class="modal-title" id="detailModalLabel"></h5>-->
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+            </div>
+            <div class="modal-body">
+                <div id="detailContent">
+
+                    <!-- Nội dung chi tiết đơn hàng sẽ được thay đổi thông qua JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <!--                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  const toggler = document.querySelector(".btn");
+  toggler.addEventListener("click", function () {
+    document.querySelector("#sidebar").classList.toggle("collapsed");
+  });
+  function decodeHTMLEntities(text) {
+    return text.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+  }
+  const existingData = {
+    hangsanxuats: JSON.parse(decodeHTMLEntities('<%= JSON.stringify(hangsanxuats)%>')),
+    rams: JSON.parse(decodeHTMLEntities('<%= JSON.stringify(rams)%>')),
+    dungluongs: JSON.parse(decodeHTMLEntities('<%= JSON.stringify(dungluongs)%>')),
+    maus: JSON.parse(decodeHTMLEntities('<%= JSON.stringify(maus)%>'))
+  };
+  function reloadPage() {
+    window.location.reload();
+  }
+
+  function previewImage(event) {
+    const imgPreview = document.getElementById('imgPreview');
+    imgPreview.src = URL.createObjectURL(event.target.files[0]);
+  }
+
+  function addMauModal() {
+    try {
+      let headerModal ="";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Thêm màu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="saveMau()">Thêm Mới</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      let contentModal = "";
+      contentModal +=`
+        <form id="addForm">
+            <div class="mb-3">
+                <label for="editDiscount" class="form-label">Tên màu:</label>
+                <input type="text" class="form-control" id="addTenMau" name="addTenMau"
+                       placeholder="Nhập tên màu" required>
+            </div>
+        </form>
+      `;
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function addRamModal() {
+    try {
+      let headerModal ="";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Thêm RAM</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="saveRam()">Thêm Mới</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      let contentModal = "";
+      contentModal +=`
+        <form id="addForm">
+            <div class="mb-3">
+                <label for="editDiscount" class="form-label">RAM:</label>
+                <input type="number" class="form-control" id="addRAM" name="addRAM"
+                       placeholder="Nhập RAM" required>
+            </div>
+        </form>
+      `;
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function addDungLuongModal() {
+    try {
+      let headerModal ="";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Thêm dung lượng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="saveDungLuong()">Thêm Mới</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      let contentModal = "";
+      contentModal +=`
+        <form id="addForm">
+            <div class="mb-3">
+                <label for="editDiscount" class="form-label">Dung lượng:</label>
+                <input type="number" class="form-control" id="addDungLuong" name="addDungLuong"
+                       placeholder="Nhập dung lượng" required>
+            </div>
+        </form>
+      `;
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function addHangSanXuatModal() {
+    try {
+      let headerModal ="";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Thêm hãng sản xuất</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="saveHangSanXuat()">Thêm Mới</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      let contentModal = "";
+      contentModal +=`
+        <form id="addForm" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="formFileDisabled" class="form-label">Hình ảnh:</label>
+              <input class="form-control" type="file" id="addHinhAnh" name="addHinhAnh" >
+            </div>
+            <div class="mb-3">
+                <label for="editDiscount" class="form-label">Hãng sản xuất:</label>
+                <input type="text" class="form-control" id="addHangSX" name="addHangSX"
+                       placeholder="Nhập dung lượng" required>
+            </div>
+        </form>
+      `;
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function editDungLuongModal(id, boNho) {
+    try {
+      let headerModal ="";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Sửa dung lượng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="updateDungLuong('${id}')">Lưu Thay Đổi</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      let contentModal = "";
+      contentModal +=`
+        <form id="editForm">
+            <div class="mb-3">
+                <label for="editDiscount" class="form-label">Dung lượng:</label>
+                <input type="number" class="form-control" id="editDungLuong" name="editDungLuong"
+                       placeholder="Nhập dung lượng" required>
+            </div>
+        </form>
+      `;
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      document.getElementById('editDungLuong').value = boNho;
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function editRamModal(id, ram) {
+    try {
+      let headerModal ="";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Sửa RAM</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="updateRAM('${id}')">Lưu Thay Đổi</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      let contentModal = "";
+      contentModal +=`
+        <form id="editForm">
+            <div class="mb-3">
+                <label for="editDiscount" class="form-label">RAM:</label>
+                <input type="number" class="form-control" id="editRAM" name="editRAM"
+                       placeholder="Nhập RAM" required>
+            </div>
+        </form>
+      `;
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      document.getElementById('editRAM').value = ram;
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function editMauModal(id, mau) {
+    try {
+      let headerModal ="";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Sửa màu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="updateMau('${id}')">Lưu Thay Đổi</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      let contentModal = "";
+      contentModal +=`
+        <form id="editForm">
+            <div class="mb-3">
+                <label for="editDiscount" class="form-label">Màu:</label>
+                <input type="text" class="form-control" id="editMau" name="editMau"
+                       placeholder="Nhập màu" required>
+            </div>
+        </form>
+      `;
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      document.getElementById('editMau').value = mau;
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function editHangSXModal(id, hinhAnh, tenHangSX) {
+    try {
+      let headerModal ="";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Sửa hãng sản xuất</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="updateHangSanXuat('${id}')">Lưu Thay Đổi</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      let contentModal = "";
+      contentModal +=`
+        <form id="editForm" enctype="multipart/form-data">
+            <div class="mb-3" >
+                <label for="editHinhAnh" class="form-label">Hình ảnh:</label>
+                <input type="file" class="form-control" id="editHinhAnh" name="editHinhAnh" style="display: none;" accept="image/*" onchange="previewImage(event)">
+                <img src="${hinhAnh}" width="100px" height="100px" class="rounded mx-auto d-block" onclick="document.getElementById('editHinhAnh').click();" id="imgPreview">
+            </div>
+            <div class="mb-3">
+                <label for="editDiscount" class="form-label">Tên hãng:</label>
+                <input type="text" class="form-control" id="editTenHang" name="editTenHang"
+                       placeholder="Nhập tên hãng sản xuất" required>
+            </div>
+        </form>
+      `;
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      document.getElementById('editTenHang').value = tenHangSX;
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async function saveMau() {
+    if (validateForm('addMau', existingData)) {
+      const tenMau = document.getElementById('addTenMau').value;
+      const response = await fetch(`/maus/addMau`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ tenMau })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      reloadPage()
+    }
+
+  }
+
+  async function saveRam() {
+    if (validateForm('addRAM', existingData)) {
+      const RAM = document.getElementById('addRAM').value;
+      const response = await fetch(`/rams/addRam`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ RAM })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      reloadPage()
+    }
+
+  }
+
+  async function saveDungLuong() {
+    if (validateForm('addDungLuong', existingData)) {
+      const boNho = document.getElementById('addDungLuong').value;
+      const response = await fetch(`/dungluongs/addDungLuong`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ boNho })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      reloadPage()
+    }
+
+  }
+
+  async function saveHangSanXuat() {
+    try {
+      if (validateForm('addHangSanXuat', existingData)) {
+        const fileInput = document.getElementById('addHinhAnh');
+        const tenHang = document.getElementById('addHangSX').value;
+        const formData = new FormData();
+        formData.append('tenHang', tenHang);
+        formData.append('hinhAnh', fileInput.files[0]);
+        const response = await fetch('/hangsanxuats/addHangSanXuatFirebase', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        reloadPage()
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async function updateDungLuong(id) {
+    if (validateForm('editDungLuong', existingData)) {
+      const boNho = document.getElementById('editDungLuong').value;
+      const response = await fetch(`/dungluongs/updateDungLuong/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ boNho })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      reloadPage()
+    }
+
+  }
+
+  async function updateRAM(id) {
+    if (validateForm('editRAM', existingData)) {
+      const RAM = document.getElementById('editRAM').value;
+      const response = await fetch(`/rams/updateRam/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ RAM })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      reloadPage()
+    }
+
+  }
+
+  async function updateMau(id) {
+    if (validateForm('editMau', existingData)) {
+      const tenMau = document.getElementById('editMau').value;
+      const response = await fetch(`/maus/updateMau/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ tenMau })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      reloadPage()
+    }
+
+  }
+
+  async function updateHangSanXuat(id) {
+    if (validateForm('editHangSanXuat', existingData)) {
+      const fileInput = document.getElementById('editHinhAnh');
+      const tenHang = document.getElementById('editTenHang').value;
+      const formData = new FormData();
+      formData.append('tenHang', tenHang);
+      formData.append('hinhAnh', fileInput.files[0]);
+      const response = await fetch(`/hangsanxuats/updateHangSanXuatFirebase/${id}`, {
+        method: 'PUT',
+        body: formData
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      reloadPage()
+    }
+
+  }
+
+  function isImageFile(file) {
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+    return allowedExtensions.test(file.name);
+  }
+
+  function validateForm(formType, existingData) {
+    let isValid = true;
+    let tenHang, RAM, boNho, tenMau, fileInput;
+
+    switch (formType) {
+      case 'addHangSanXuat':
+        tenHang = document.getElementById('addHangSX').value.trim();
+        fileInput = document.getElementById('addHinhAnh').files[0];
+        if (!tenHang) {
+          isValid = false;
+          alert('Vui lòng nhập tên hãng sản xuất');
+        } else if (!fileInput || !isImageFile(fileInput)) {
+          isValid = false;
+          alert('Vui lòng chọn một file ảnh hợp lệ');
+        } else if (existingData.hangsanxuats.some(item => item.tenHang.toLowerCase() === tenHang.toLowerCase())) {
+          isValid = false;
+          alert('Hãng sản xuất này đã tồn tại');
+        }
+        break;
+      case 'editHangSanXuat':
+        tenHang = document.getElementById('editTenHang').value.trim();
+        fileInput = document.getElementById('editHinhAnh').files[0];
+        if (!tenHang) {
+          isValid = false;
+          alert('Vui lòng nhập tên hãng sản xuất');
+        } else if (fileInput && !isImageFile(fileInput)) {
+          isValid = false;
+          alert('Vui lòng chọn một file ảnh hợp lệ');
+        } else if (existingData.hangsanxuats.some(item => item.tenHang.toLowerCase() === tenHang.toLowerCase())) {
+          isValid = false;
+          alert('Hãng sản xuất này đã tồn tại');
+        }
+        break;
+      case 'addRAM':
+        RAM = document.getElementById('addRAM').value.trim();
+        if (!RAM || isNaN(RAM) || RAM <= 0) {
+          isValid = false;
+          alert('Vui lòng nhập RAM là một số dương');
+        } else if (existingData.rams.some(item => item.RAM === parseInt(RAM))) {
+          isValid = false;
+          alert('RAM này đã tồn tại');
+        }
+        break;
+      case 'editRAM':
+        RAM = document.getElementById('editRAM').value.trim();
+        if (!RAM || isNaN(RAM) || RAM <= 0) {
+          isValid = false;
+          alert('Vui lòng nhập RAM là một số dương');
+        }else if (existingData.rams.some(item => item.RAM === parseInt(RAM))) {
+          isValid = false;
+          alert('RAM này đã tồn tại');
+        }
+        break;
+      case 'addDungLuong':
+        boNho = document.getElementById('addDungLuong').value.trim();
+        if (!boNho || isNaN(boNho) || boNho <= 0) {
+          isValid = false;
+          alert('Vui lòng nhập dung lượng là một số dương');
+        } else if (existingData.dungluongs.some(item => item.boNho === parseInt(boNho))) {
+          isValid = false;
+          alert('Dung lượng này đã tồn tại');
+        }
+        break;
+      case 'editDungLuong':
+        boNho = document.getElementById('editDungLuong').value.trim();
+        if (!boNho || isNaN(boNho) || boNho <= 0) {
+          isValid = false;
+          alert('Vui lòng nhập dung lượng là một số dương');
+        }else if (existingData.dungluongs.some(item => item.boNho === parseInt(boNho))) {
+          isValid = false;
+          alert('Dung lượng này đã tồn tại');
+        }
+        break;
+      case 'addMau':
+        tenMau = document.getElementById('addTenMau').value.trim();
+        if (!tenMau) {
+          isValid = false;
+          alert('Vui lòng nhập tên màu');
+        } else if (existingData.maus.some(item => item.tenMau.toLowerCase() === tenMau.toLowerCase())) {
+          isValid = false;
+          alert('Màu này đã tồn tại');
+        }
+        break;
+      case 'editMau':
+        tenMau = document.getElementById('editMau').value.trim();
+        if (!tenMau) {
+          isValid = false;
+          alert('Vui lòng nhập tên màu');
+        }else if (existingData.maus.some(item => item.tenMau.toLowerCase() === tenMau.toLowerCase())) {
+          isValid = false;
+          alert('Màu này đã tồn tại');
+        }
+        break;
+    }
+
+    return isValid;
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+</body>
+</html>

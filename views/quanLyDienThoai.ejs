@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        .borderColor {
+            border: 1px solid #EEEEEE;
+        }
+
+        td {
+            border: 1px solid #dcdada;
+        }
+
+        .btnEdit {
+            background: none;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div id="sidebar">
+        <% include menu.ejs %>
+    </div>
+    <div class="main">
+        <nav class="navbar navbar-expand px-3 border-bottom" id="navigation">
+            <div style="display: flex;">
+                <button class="btn" type="button" data-bs-theme="dark">
+                    <span><i class="fa-solid fa-bars" style="color: #000000;"></i></span>
+                </button>
+                <div class="btn"><span style="font-weight: bold; font-size: 20px">Quản lý điện thoại</span></div>
+
+            </div>
+            <div id="account">
+                <% if (typeof account !== 'undefined' ) { %>
+                    <p style="color: black; font-weight: bold">
+                        Welcome, <%= account.username %>!
+                    </p>
+                <% } %>
+                <span><i class="fa-solid fa-circle-user" style="font-size: 25px"></i></span>
+            </div>
+        </nav>
+        <main class="content px-3 py-2">
+            <div class="content" id="mainContent">
+                <div class="tab-content d-flex row justify-content-center">
+                    <div class="flex-row d-flex flex-row my-2">
+                        <form method="GET" action="/quanLyDienThoaiW/searchDienThoai"
+                              class="d-flex justify-content-between flex-fill">
+                            <div>
+                                <div class="d-flex flex-row">
+                                    <input type="text" name="tenDienThoai" class="m-1 form-control "
+                                           placeholder="Nhập điện thoại"/>
+                                    <input type="text" name="tenHang" class="m-1 form-control "
+                                           placeholder="Nhập hãng"/>
+                                    <input type="text" name="tenMau" class="m-1 form-control "
+                                           placeholder="Nhập màu"/>
+                                </div>
+                                <div class="d-flex flex-row">
+                                    <input type="text" name="boNho" class="m-1 form-control "
+                                           placeholder="Nhập dung lượng"/>
+                                    <input type="text" name="RAM" class="m-1 form-control "
+                                           placeholder="Nhập RAM"/>
+                                    <input type="text" name="giaTien" class="m-1 form-control "
+                                           placeholder="Nhập giá tiền"/>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn-dark m-1 btn d-flex flex-row col-auto" type="submit" value="submit">
+                                    <span class=""><i class="fa-solid fa-magnifying-glass"></i></span>
+                                    <span class="d-inline">Tìm Kiếm</span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <form>
+                            <button class="btn-dark m-1 btn d-flex flex-row col-auto" type="button" value="submit"
+                                    onclick="addDienThoaiModal()">
+                                <span class=""><i class="fa-solid fa-plus"></i></span>
+                                <span class="d-inline">Thêm Mới Điện Thoại</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="tab-content d-flex row justify-content-center">
+                        <table class="table text-break table-bordered">
+                            <thead>
+                            <tr class="bg-secondary bg-opacity-50 text-bg-info">
+                                <th scope="col" class="col-2 borderColor"
+                                    style="background-color: #dcdada; text-align: center">
+                                    Điện thoại
+                                </th>
+                                <th scope="col" class="col-1 borderColor"
+                                    style="background-color: #dcdada; text-align: center">
+                                    Hãng
+                                </th>
+                                <th scope="col" class="col-2 borderColor"
+                                    style="background-color: #dcdada; text-align: center">
+                                    Màu
+                                </th>
+                                <th scope="col" class="col-1 borderColor"
+                                    style="background-color: #dcdada; text-align: center">
+                                    Dung lượng
+                                </th>
+                                <th scope="col" class="col-1 borderColor"
+                                    style="background-color: #dcdada; text-align: center">
+                                    RAM
+                                </th>
+                                <th scope="col" class="col-2 borderColor"
+                                    style="background-color: #dcdada; text-align: center">
+                                    Giá tiền
+                                </th>
+                                <th scope="col" class="col-1 borderColor"
+                                    style="background-color: #dcdada; text-align: center">
+                                    Số lượng
+                                </th>
+                                <th scope="col" class="col-1 borderColor" style="background-color: #dcdada;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% for(var i = 0; i < data.length; i++){ %>
+                                <tr>
+                                    <td rowspan="<%= data[i].chiTiet.length > 0 ? (data[i].chiTiet.length + 1) : 1 %>">
+                                        <p><%= data[i].tenDienThoai %></p>
+                                        <div class="d-flex flex-row ">
+                                            <button
+                                                    onclick="addChiTietDienThoaiModal(event, '<%= JSON.stringify(data[i]) %>')"
+                                                    class="btnEdit"
+                                            >
+                                                <span class="" id="editIcon"><i
+                                                            class="fa-solid fa-plus"></i></span>
+                                            </button>
+                                            <button
+                                                    onclick="editDienThoaiModal(event, '<%= JSON.stringify(data[i]) %>')"
+                                                    class="btnEdit"
+                                            >
+                                                <span class="" id="editIcon"><i
+                                                            class="fa-solid fa-pen-to-square"></i></span>
+                                            </button>
+                                            <button
+                                                    onclick="detailDienThoai(event, '<%= JSON.stringify(data[i]) %>')"
+                                                    class="btnEdit"
+                                            >
+                                            <span class="" id="editIcon"><i
+                                                        class="fa-solid fa-clipboard-list"></i></span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td rowspan="<%= data[i].chiTiet.length > 0 ? (data[i].chiTiet.length + 1) : 1 %>"><%= data[i].maHangSX.tenHang %></td>
+                                    <% if(data[i].chiTiet.length === 0) { %>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    <% } %>
+                                </tr>
+                                <% for(var j = 0; j < data[i].chiTiet.length; j++){ %>
+                                    <tr>
+                                        <td><%= data[i].chiTiet[j].maMau.tenMau %></td>
+                                        <td><%= data[i].chiTiet[j].maDungLuong.boNho %> GB</td>
+                                        <td><%= data[i].chiTiet[j].maRam.RAM %> GB</td>
+                                        <td><%= data[i].chiTiet[j].giaTien %></td>
+                                        <td><%= data[i].chiTiet[j].soLuong %></td>
+                                        <td style="text-align: center">
+                                            <button
+                                                    onclick="editChiTietDienThoaiModal(event, '<%= JSON.stringify(data[i].chiTiet[j]) %>', '<%= data[i].tenDienThoai%>')"
+                                                    class="btnEdit"
+                                            >
+                                                <span class="" id="editIcon"><i
+                                                            class="fa-solid fa-pen-to-square"></i></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% } %>
+
+                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<!--Modal-->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-header">
+
+            </div>
+            <div class="modal-body">
+                <div id="detailContent">
+
+                </div>
+            </div>
+            <div class="modal-footer" id="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  const toggler = document.querySelector(".btn");
+  toggler.addEventListener("click", function () {
+    document.querySelector("#sidebar").classList.toggle("collapsed");
+  });
+  const id = '<%= account.id %>'
+
+  function reloadPage() {
+    window.location.reload();
+  }
+
+  function previewImage(event) {
+    const imgPreview = document.getElementById('imgPreview');
+    imgPreview.src = URL.createObjectURL(event.target.files[0]);
+  }
+
+  let hangSanXuatData, uuDaiData, mauData, dungLuongData, ramData;
+
+  fetch('/hangsanxuats/getHangSanXuat')
+      .then(response => response.json())
+      .then(data => {
+        hangSanXuatData = data;
+      });
+
+  fetch(`/uudais/getUuDai-Active/${id}`)
+      .then(response => response.json())
+      .then(data => {
+        uuDaiData = data;
+      });
+  fetch(`/maus/getMau`)
+      .then(response => response.json())
+      .then(data => {
+        mauData = data;
+      });
+  fetch(`/dungluongs/getDungLuong`)
+      .then(response => response.json())
+      .then(data => {
+        dungLuongData = data;
+      });
+  fetch(`/rams/getRam`)
+      .then(response => response.json())
+      .then(data => {
+        ramData = data;
+      });
+
+  function validateInput() {
+    const tenDienThoai = document.getElementById('editTenDienThoai') ? document.getElementById('editTenDienThoai').value : document.getElementById('addTenDienThoai').value;
+    const hinhAnh = document.getElementById('editHinhAnh') ? document.getElementById('editHinhAnh').files[0] : document.getElementById('addHinhAnh').files[0];
+    const namSanXuat = document.getElementById('editNamSanXuat') ? document.getElementById('editNamSanXuat').value : document.getElementById('addNamSanXuat').value;
+
+    if (!tenDienThoai) {
+      alert('Vui lòng nhập tên điện thoại');
+      return false;
+    }
+
+    if (!hinhAnh) {
+      alert('Vui lòng chọn hình ảnh');
+      return false;
+    }
+
+    if (namSanXuat && isNaN(namSanXuat)) {
+      alert('Năm sản xuất phải là số');
+      return false;
+    }
+
+    return true;
+  }
+
+  // thêm điện thoại
+  function addDienThoaiModal() {
+    try {
+      let contentModal = "";
+
+      contentModal += `
+        <form id="addForm" enctype="multipart/form-data">
+          <label for="editDiscount" class="form-label">Hãng sản xuất:</label>
+          <select class="form-select mb-3" aria-label="Default select example" id="addHangSanXuatSelect" required>`;
+      hangSanXuatData.forEach(hangSanXuat => {
+        contentModal += `<option value="${hangSanXuat._id}">${hangSanXuat.tenHang}</option>`;
+      });
+
+      contentModal += `
+          </select>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Tên điện thoại:</label>
+              <input type="text" class="form-control" id="addTenDienThoai" name="addTenDienThoai"
+                     placeholder="Nhập tên điện thoại" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Kích thước:</label>
+              <input type="text" class="form-control" id="addKichThuoc" name="addKichThuoc"
+                     placeholder="Nhập kích thước" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Công nghệ màn hình:</label>
+              <input type="text" class="form-control" id="addCongNgheManHinh" name="addCongNgheManHinh"
+                     placeholder="Nhập công nghệ màn hình" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Camera:</label>
+              <input type="text" class="form-control" id="addCamera" name="addCamera"
+                     placeholder="Nhập camera" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">CPU:</label>
+              <input type="text" class="form-control" id="addCPU" name="addCPU"
+                     placeholder="Nhập CPU" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Pin:</label>
+              <input type="text" class="form-control" id="addPin" name="addPin"
+                     placeholder="Nhập pin" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Hệ điều hành:</label>
+              <input type="text" class="form-control" id="addHeDieuHanh" name="addHeDieuHanh"
+                     placeholder="Nhập hệ điều hành" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Độ phân giải:</label>
+              <input type="text" class="form-control" id="addDoPhanGiai" name="addDoPhanGiai"
+                     placeholder="Nhập độ phân giải" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Năm sản xuất:</label>
+              <input type="text" class="form-control" id="addNamSanXuat" name="addNamSanXuat"
+                     placeholder="Nhập năm sản xuất" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Thời gian bảo hành:</label>
+              <input type="text" class="form-control" id="addThoiGianBaoHanh" name="addThoiGianBaoHanh"
+                     placeholder="Nhập thời gian bảo hành:" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Mô tả thêm:</label>
+              <input type="text" class="form-control" id="addMoTaThem" name="addMoTaThem"
+                     placeholder="Nhập mô tả thêm" required>
+          </div>
+          <label for="editDiscount" class="form-label">Ưu đãi:</label>
+          <select class="form-select mb-3" aria-label="Default select example" id="addUuDaiSelect">
+            <option selected value="">Chọn ưu đãi</option>`;
+      uuDaiData.forEach(uuDai => {
+        contentModal += `<option value="${uuDai._id}">${uuDai.giamGia}%</option>`;
+      });
+
+      contentModal += `
+          </select>
+          <div class="mb-3">
+              <label for="formFileDisabled" class="form-label">Hình ảnh:</label>
+              <input class="form-control" type="file" id="addHinhAnh" name="addHinhAnh" >
+          </div>
+        </form>`;
+
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      let headerModal = "";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Thêm điện thoại</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="saveDienThoai()">Thêm Mới</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+
+
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async function saveDienThoai() {
+    try {
+      if (!validateInput()) {
+        return;
+      }
+      const fileInput = document.getElementById('addHinhAnh');
+      const formData = new FormData();
+      formData.append('tenDienThoai', document.getElementById('addTenDienThoai').value);
+      formData.append('kichThuoc', document.getElementById('addKichThuoc').value);
+      formData.append('congNgheManHinh', document.getElementById('addCongNgheManHinh').value);
+      formData.append('camera', document.getElementById('addCamera').value);
+      formData.append('cpu', document.getElementById('addCPU').value);
+      formData.append('pin', document.getElementById('addPin').value);
+      formData.append('heDieuHanh', document.getElementById('addHeDieuHanh').value);
+      formData.append('doPhanGiai', document.getElementById('addDoPhanGiai').value);
+      formData.append('namSanXuat', document.getElementById('addNamSanXuat').value);
+      formData.append('thoiGianBaoHanh', document.getElementById('addThoiGianBaoHanh').value);
+      formData.append('moTaThem', document.getElementById('addMoTaThem').value);
+      formData.append('maHangSX', document.getElementById('addHangSanXuatSelect').value);
+      formData.append('maUuDai', document.getElementById('addUuDaiSelect').value);
+      formData.append('maCuaHang', id);
+      formData.append('hinhAnh', fileInput.files[0]);
+      const response = await fetch('/dienthoais/addDienThoaiFirebase', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      reloadPage()
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  // sửa điện thoại
+  function editDienThoaiModal(event, dataJSON) {
+    try {
+      const data = JSON.parse(dataJSON);
+      let contentModal = "";
+
+      contentModal += `
+        <form id="addForm" enctype="multipart/form-data">
+          <div class="mb-3" >
+                <input type="file" class="form-control" id="editHinhAnh" name="editHinhAnh" style="display: none;" accept="image/*" onchange="previewImage(event)">
+                <img src="${data.hinhAnh}" width="auto" height="150px" class="rounded mx-auto d-block" onclick="document.getElementById('editHinhAnh').click();" id="imgPreview">
+          </div>
+          <label for="editDiscount" class="form-label">Hãng sản xuất:</label>
+          <select class="form-select mb-3" aria-label="Default select example" id="editHangSanXuatSelect" required>`;
+
+      contentModal += `
+          </select>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Tên điện thoại:</label>
+              <input type="text" class="form-control" id="editTenDienThoai" name="editTenDienThoai"
+                     placeholder="Nhập tên điện thoại" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Kích thước:</label>
+              <input type="text" class="form-control" id="editKichThuoc" name="editKichThuoc"
+                     placeholder="Nhập kích thước" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Công nghệ màn hình:</label>
+              <input type="text" class="form-control" id="editCongNgheManHinh" name="editCongNgheManHinh"
+                     placeholder="Nhập công nghệ màn hình" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Camera:</label>
+              <input type="text" class="form-control" id="editCamera" name="editCamera"
+                     placeholder="Nhập camera" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">CPU:</label>
+              <input type="text" class="form-control" id="editCPU" name="editCPU"
+                     placeholder="Nhập CPU" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Pin:</label>
+              <input type="text" class="form-control" id="editPin" name="editPin"
+                     placeholder="Nhập pin" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Hệ điều hành:</label>
+              <input type="text" class="form-control" id="editHeDieuHanh" name="editHeDieuHanh"
+                     placeholder="Nhập hệ điều hành" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Độ phân giải:</label>
+              <input type="text" class="form-control" id="editDoPhanGiai" name="editDoPhanGiai"
+                     placeholder="Nhập độ phân giải" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Năm sản xuất:</label>
+              <input type="text" class="form-control" id="editNamSanXuat" name="editNamSanXuat"
+                     placeholder="Nhập năm sản xuất" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Thời gian bảo hành:</label>
+              <input type="text" class="form-control" id="editThoiGianBaoHanh" name="editThoiGianBaoHanh"
+                     placeholder="Nhập thời gian bảo hành:" required>
+          </div>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Mô tả thêm:</label>
+              <input type="text" class="form-control" id="editMoTaThem" name="editMoTaThem"
+                     placeholder="Nhập mô tả thêm" required>
+          </div>
+          <label for="editDiscount" class="form-label">Ưu đãi:</label>
+          <select class="form-select mb-3" aria-label="Default select example" id="editUuDaiSelect">
+          </select>
+        </form>`;
+
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      let headerModal = "";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Sửa điện thoại</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="updateDienThoai('${data._id}')">Lưu thay đổi</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      document.getElementById('editTenDienThoai').value = data.tenDienThoai;
+      document.getElementById('editKichThuoc').value = data.kichThuoc;
+      document.getElementById('editCongNgheManHinh').value = data.congNgheManHinh;
+      document.getElementById('editCamera').value = data.camera;
+      document.getElementById('editCPU').value = data.cpu;
+      document.getElementById('editPin').value = data.pin;
+      document.getElementById('editHeDieuHanh').value = data.heDieuHanh;
+      document.getElementById('editDoPhanGiai').value = data.doPhanGiai;
+      document.getElementById('editNamSanXuat').value = data.namSanXuat;
+      document.getElementById('editThoiGianBaoHanh').value = data.thoiGianBaoHanh;
+      document.getElementById('editMoTaThem').value = data.moTaThem;
+
+      setSelectValues(data.maHangSX, data.maUuDai);
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+
+
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function setSelectValues(hangSXValue, uuDaiValue) {
+    const hangSXSelect = document.getElementById('editHangSanXuatSelect');
+    const uuDaiSelect = document.getElementById('editUuDaiSelect');
+
+    hangSXSelect.innerHTML = '';
+    uuDaiSelect.innerHTML = '';
+    const nullOption = document.createElement('option');
+    nullOption.value = '';
+    nullOption.text = 'Chọn ưu đãi';
+    uuDaiSelect.appendChild(nullOption);
+
+    hangSanXuatData.forEach(hangSanXuat => {
+      const option = document.createElement('option');
+      option.value = hangSanXuat._id;
+      option.text = hangSanXuat.tenHang;
+      if (hangSanXuat._id === hangSXValue) {
+        option.selected = true;
+      }
+      hangSXSelect.appendChild(option);
+    });
+
+    uuDaiData.forEach(uuDai => {
+      const option = document.createElement('option');
+      option.value = uuDai._id;
+      option.text = `${uuDai.giamGia}%`;
+      if (uuDaiValue !== null) {
+        if (uuDai._id === uuDaiValue._id) {
+          option.selected = true;
+        }
+      } else {
+        nullOption.selected = true;
+      }
+      uuDaiSelect.appendChild(option);
+    });
+  }
+
+  async function updateDienThoai(idDienThoai) {
+    try {
+      if (!validateInput()) {
+        return;
+      }
+      const fileInput = document.getElementById('editHinhAnh');
+      const formData = new FormData();
+      formData.append('tenDienThoai', document.getElementById('editTenDienThoai').value);
+      formData.append('kichThuoc', document.getElementById('editKichThuoc').value);
+      formData.append('congNgheManHinh', document.getElementById('editCongNgheManHinh').value);
+      formData.append('camera', document.getElementById('editCamera').value);
+      formData.append('cpu', document.getElementById('editCPU').value);
+      formData.append('pin', document.getElementById('editPin').value);
+      formData.append('heDieuHanh', document.getElementById('editHeDieuHanh').value);
+      formData.append('doPhanGiai', document.getElementById('editDoPhanGiai').value);
+      formData.append('namSanXuat', document.getElementById('editNamSanXuat').value);
+      formData.append('thoiGianBaoHanh', document.getElementById('editThoiGianBaoHanh').value);
+      formData.append('moTaThem', document.getElementById('editMoTaThem').value);
+      formData.append('maHangSX', document.getElementById('editHangSanXuatSelect').value);
+      formData.append('maUuDai', document.getElementById('editUuDaiSelect').value);
+      formData.append('maCuaHang', id);
+      formData.append('hinhAnh', fileInput.files[0]);
+      const response = await fetch(`/dienthoais/updateDienThoaiFirebase/${idDienThoai}`, {
+        method: 'PUT',
+        body: formData
+      });
+
+      const data = await response.json();
+      reloadPage()
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+//   thêm chi tiết điện thoai
+  function addChiTietDienThoaiModal(event, dataJSON) {
+    const data = JSON.parse(dataJSON);
+    let contentModal = "";
+    contentModal += `
+        <form id="addForm" enctype="multipart/form-data">
+          <label for="editDiscount" class="form-label">Màu:</label>
+          <select class="form-select mb-3" aria-label="Default select example" id="addMauSelect" required>`;
+    mauData.forEach(mau => {
+      contentModal += `<option value="${mau._id}">${mau.tenMau}</option>`;
+    });
+
+    contentModal += `</select>
+        <label for="editDiscount" class="form-label">Dung lượng:</label>
+        <select class="form-select mb-3" aria-label="Default select example" id="addDungLuongSelect" required>`
+    dungLuongData.forEach(dungLuong => {
+      contentModal += `<option value="${dungLuong._id}">${dungLuong.boNho} GB</option>`;
+    });
+
+    contentModal += `</select>
+        <label for="editDiscount" class="form-label">RAM:</label>
+        <select class="form-select mb-3" aria-label="Default select example" id="addRamSelect" required>`
+    ramData.forEach(ram => {
+      contentModal += `<option value="${ram._id}">${ram.RAM} GB</option>`;
+    });
+    contentModal += `</select>
+        <div class="mb-3">
+          <label for="editDiscount" class="form-label">Giá tiền:</label>
+          <input type="text" class="form-control" id="addGiaTien" name="addGiaTien"
+                 placeholder="Nhập giá tiền" required>
+        </div>
+        <div class="mb-3">
+          <label for="editDiscount" class="form-label">Số lượng:</label>
+          <input type="text" class="form-control" id="addSoLuong" name="addSoLuong"
+                 placeholder="Nhập số lượng" required>
+        </div>
+        <div class="mb-3">
+          <label for="formFileDisabled" class="form-label">Hình ảnh:</label>
+          <input class="form-control" type="file" id="addHinhAnh" name="addHinhAnh" >
+        </div>
+        </form>`
+    document.getElementById('detailContent').innerHTML = contentModal;
+
+    let headerModal = "";
+    headerModal += `<h5 class="modal-title" id="detailModalLabel">Thêm thông số điện thoại: ${data.tenDienThoai}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+    document.getElementById('modal-header').innerHTML = headerModal;
+
+    let footerModal = "";
+    footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-dark" onclick="saveChiTietDienThoai('${data._id}')">Thêm Mới</button>`
+    document.getElementById('modal-footer').innerHTML = footerModal;
+
+    const modal = new bootstrap.Modal(document.getElementById('modal'), {
+      keyboard: false
+    });
+    modal.show();
+  }
+
+  async function saveChiTietDienThoai(idDienThoai) {
+    try {
+      if (!validateChiTietInput()) {
+        return;
+      }
+      const fileInput = document.getElementById('addHinhAnh');
+      const formData = new FormData();
+      formData.append('soLuong', document.getElementById('addSoLuong').value);
+      formData.append('giaTien', document.getElementById('addGiaTien').value);
+      formData.append('maDienThoai', idDienThoai);
+      formData.append('maMau', document.getElementById('addMauSelect').value);
+      formData.append('maDungLuong', document.getElementById('addDungLuongSelect').value);
+      formData.append('maRam', document.getElementById('addRamSelect').value);
+      formData.append('hinhAnh', fileInput.files[0]);
+      const response = await fetch('/chitietdienthoais/addChiTietDienThoaiFirebase', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      reloadPage()
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+//   sửa chi tiết đện thoại
+  function editChiTietDienThoaiModal(event, dataJSON, tenDienThoai) {
+    try {
+      const data = JSON.parse(dataJSON);
+      let contentModal = "";
+
+      contentModal += `
+        <form id="addForm" enctype="multipart/form-data">
+          <div class="mb-3" >
+                <input type="file" class="form-control" id="editHinhAnh" name="editHinhAnh" style="display: none;" accept="image/*" onchange="previewImage(event)">
+                <img src="${data.hinhAnh}" width="auto" height="150px" class="rounded mx-auto d-block" onclick="document.getElementById('editHinhAnh').click();" id="imgPreview">
+          </div>
+          <label for="editDiscount" class="form-label">Màu:</label>
+          <select class="form-select mb-3" aria-label="Default select example" id="editMauSelect" required>
+          </select>
+          <label for="editDiscount" class="form-label">Dung lượng:</label>
+          <select class="form-select mb-3" aria-label="Default select example" id="editDungLuongSelect" required>
+          </select>
+          <label for="editDiscount" class="form-label">RAM:</label>
+          <select class="form-select mb-3" aria-label="Default select example" id="editRamSelect" required>
+          </select>
+          <div class="mb-3">
+              <label for="editDiscount" class="form-label">Giá tiền:</label>
+              <input type="text" class="form-control" id="editGiaTien" name="editGiaTien"
+                     placeholder="Nhập giá tiền" required>
+          </div>
+            <div class="mb-3">
+              <label for="editDiscount" class="form-label">Số lượng:</label>
+              <input type="text" class="form-control" id="editSoLuong" name="editSoLuong"
+                     placeholder="Nhập số lượng" required>
+          </div>
+        </form>`;
+
+
+      document.getElementById('detailContent').innerHTML = contentModal;
+
+      let headerModal = "";
+      headerModal += `<h5 class="modal-title" id="detailModalLabel">Sửa thông số điện thoại: ${tenDienThoai}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+      document.getElementById('modal-header').innerHTML = headerModal;
+
+      let footerModal = "";
+      footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-dark" onclick="updateChiTietDienThoai('${data._id}')">Lưu thay đổi</button>`
+      document.getElementById('modal-footer').innerHTML = footerModal;
+
+      document.getElementById('editGiaTien').value = data.giaTien;
+      document.getElementById('editSoLuong').value = data.soLuong;
+
+      setSelectValuesCTDT(data.maMau, data.maDungLuong, data.maRam);
+      const modal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+      });
+      modal.show();
+
+
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  function setSelectValuesCTDT(mau, dungLuong, ram) {
+    const mauSelect = document.getElementById('editMauSelect');
+    const dungLuongSelect = document.getElementById('editDungLuongSelect');
+    const ramSelect = document.getElementById('editRamSelect');
+
+    mauSelect.innerHTML = '';
+    dungLuongSelect.innerHTML = '';
+    ramSelect.innerHTML = '';
+
+    mauData.forEach(data => {
+      const option = document.createElement('option');
+      option.value = data._id;
+      option.text = data.tenMau;
+      if (data._id === mau._id) {
+        option.selected = true;
+      }
+      mauSelect.appendChild(option);
+    });
+
+    dungLuongData.forEach(data => {
+      const option = document.createElement('option');
+      option.value = data._id;
+      option.text = data.boNho;
+      if (data._id === dungLuong._id) {
+        option.selected = true;
+      }
+      dungLuongSelect.appendChild(option);
+    });
+
+    ramData.forEach(data => {
+      const option = document.createElement('option');
+      option.value = data._id;
+      option.text = data.RAM;
+      if (data._id === ram._id) {
+        option.selected = true;
+      }
+      ramSelect.appendChild(option);
+    });
+  }
+
+  async function updateChiTietDienThoai(idCTDT){
+    try {
+      if (!validateChiTietInput()) {
+        return;
+      }
+      const fileInput = document.getElementById('editHinhAnh');
+      const formData = new FormData();
+      formData.append('maMau', document.getElementById('editMauSelect').value);
+      formData.append('maDungLuong', document.getElementById('editDungLuongSelect').value);
+      formData.append('maRam', document.getElementById('editRamSelect').value);
+      formData.append('giaTien', document.getElementById('editGiaTien').value);
+      formData.append('soLuong', document.getElementById('editSoLuong').value);
+      formData.append('hinhAnh', fileInput.files[0]);
+      const response = await fetch(`/chitietdienthoais/updateChiTietDienThoaiFirebase/${idCTDT}`, {
+        method: 'PUT',
+        body: formData
+      });
+
+      const data = await response.json();
+      reloadPage()
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  //  thông tin chi tiêts
+  function detailDienThoai(event, dataJSON) {
+    const data = JSON.parse(dataJSON);
+    // console.log(dataJSON)
+    let contentModal = "";
+    contentModal += `
+        <div class="mb-2">
+
+              <div class="d-flex flex-row col-auto gap-2">
+                <div class="col-8">
+                    <p><strong style="font-size: larger"> ${data.tenDienThoai}</strong></p>
+                    <strong>Màn hình:</strong> <br>
+                    <span>Công nghệ màn hình: ${data.congNgheManHinh}</span><br>
+                    <span>Độ phân giải: ${data.doPhanGiai}</span><br>
+                    <span><strong>Camera:</strong> ${data.camera}</span><br>
+                    <strong>Hệ điều hành & CPU:</strong><br>
+                    <span>Hệ điều hành: ${data.heDieuHanh}</span><br>
+                    <span>Chip xử lý (CPU): ${data.cpu}</span><br>
+                    <span><strong>Pin:</strong> ${data.pin}</span><br>
+                    <span><strong>Tiện ích:</strong> ${data.moTaThem}</span><br>
+                    <strong>Thông tin chung:</strong><br>
+                    <span>Hãng: ${data.maHangSX.tenHang}</span><br>
+                    <span>Năm sản xuất: ${data.namSanXuat}</span><br>
+                    <span>Thời gian bảo hành: ${data.thoiGianBaoHanh}</span><br>
+                </div>
+                <div class="col-4" style="display: flex; flex-direction: column; align-items: center;">
+                    <img src="${data.hinhAnh}" width="100%" height="auto" class="img-fluid" alt="Product Image">
+                    ${data.maUuDai ? `<div style="margin-top: 10px;"><strong style="color: white; background-color: red; padding: 4px 8px; border-radius: 14px;">Giảm giá ${data.maUuDai.giamGia}%</strong></div>` : ''}
+                </div>
+              </div>
+    `
+    let listHTML = '';
+    data.chiTiet.forEach((item, index) => {
+      if (index % 2 === 0) {
+        listHTML += `</div><div class="row my-2">`;
+      }
+      listHTML += `
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4 d-flex align-items-center">
+                        <img src="${item.hinhAnh}" class="img-fluid mx-auto d-block" alt="Product Image">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body py-2">
+                            <strong class="card-title">${item.giaTien}</strong><br>
+                            <span class="card-text">${item.maMau.tenMau}</span><br>
+                            <span class="card-text">${item.maRam.RAM}GB / ${item.maDungLuong.boNho}GB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    });
+
+
+    contentModal += `
+            <div class="">
+                <div class="row">
+                    ${listHTML}
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('detailContent').innerHTML = contentModal;
+
+    let headerModal = "";
+    headerModal += `<h5 class="modal-title" id="detailModalLabel">Chi tiết điện thoại</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`;
+    document.getElementById('modal-header').innerHTML = headerModal;
+
+    let footerModal = "";
+    footerModal += `<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Đóng</button>`
+    document.getElementById('modal-footer').innerHTML = footerModal;
+
+    const modal = new bootstrap.Modal(document.getElementById('modal'), {
+      keyboard: false
+    });
+    modal.show();
+  }
+
+  function validateChiTietInput() {
+    const giaTien = document.getElementById('editGiaTien') ? document.getElementById('editGiaTien').value : document.getElementById('addGiaTien').value;
+    const soLuong = document.getElementById('editSoLuong') ? document.getElementById('editSoLuong').value : document.getElementById('addSoLuong').value;
+    const hinhAnh = document.getElementById('editHinhAnh') ? document.getElementById('editHinhAnh').files[0] : document.getElementById('addHinhAnh').files[0];
+
+    if (!giaTien) {
+      alert('Vui lòng nhập giá tiền');
+      return false;
+    }
+
+    if (isNaN(giaTien)) {
+      alert('Giá tiền phải là số');
+      return false;
+    }
+
+    if (!soLuong) {
+      alert('Vui lòng nhập số lượng');
+      return false;
+    }
+
+    if (isNaN(soLuong)) {
+      alert('Số lượng phải là số');
+      return false;
+    }
+
+    if (!hinhAnh) {
+      alert('Vui lòng chọn hình ảnh');
+      return false;
+    }
+
+    return true;
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+</body>
+</html>
