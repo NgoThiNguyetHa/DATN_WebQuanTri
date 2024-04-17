@@ -26,7 +26,7 @@ router.post('/addUuDai',async function (req, res, next) {
     // console.log(populatedUuDai);
     res.send(populatedUuDai);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).send(err);
   }
 });
@@ -68,7 +68,7 @@ router.put("/updateUuDai/:id", async (req, res) => {
 
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return res.status(500).json({message: err.message})
   }
 })

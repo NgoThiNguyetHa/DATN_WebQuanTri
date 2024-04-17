@@ -23,7 +23,7 @@ router.post('/addMau', function(req, res, next) {
     // console.log(data)
     res.send(data)
   }).catch(err => {
-    console.log
+    // console.log
   })
 });
 
@@ -63,7 +63,7 @@ router.put("/updateMau/:id", async (req, res ) => {
 
     }
   }catch(err){
-    console.log(err)
+    // console.log(err)
     return res.status(500).json({message: err.message})
   }
 })
@@ -75,7 +75,7 @@ router.get('/searchMau', async (req,res) => {
 
     res.json(mau);
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     res.status(500).json({ error: error.message });
   }
 })

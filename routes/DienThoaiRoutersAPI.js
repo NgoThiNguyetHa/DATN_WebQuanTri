@@ -47,7 +47,7 @@ router.post('/addDienThoai', async function (req, res, next) {
     // console.log(populatedDienThoai);
     res.send(populatedDienThoai);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).send(err); // Trả về lỗi nếu có lỗi xảy ra
   }
 });

@@ -162,7 +162,7 @@ router.put("/updateHoaDon/:id", async (req, res) => {
 
     }
   } catch (err) {
-    console.log("errr: ", err)
+    // console.log("errr: ", err)
     return res.status(500).json({message: err.message})
   }
 })

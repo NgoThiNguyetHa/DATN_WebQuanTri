@@ -21,7 +21,7 @@ router.post('/addRam', function(req, res, next) {
     // console.log(data)
     res.send(data)
   }).catch(err => {
-    console.log
+    // console.log
   })
 });
  
@@ -75,7 +75,7 @@ router.get('/searchRAM', async (req,res) => {
     }
     res.json(ram);
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     res.status(500).json({ error: error.message });
   }
 })

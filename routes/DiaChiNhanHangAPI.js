@@ -26,7 +26,7 @@ router.post('/addDiaChiNhanHang',async function(req, res, next) {
       .populate('maKhachHang');
       res.send(populatedDiaChiNhanHang);
     } catch (error) {
-      console.log(err);
+      // console.log(err);
     res.status(500).send(err);
     }
 });

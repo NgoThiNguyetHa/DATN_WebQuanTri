@@ -65,7 +65,7 @@ router.post('/addChiTietHoaDon', async function(req, res, next) {
 
     res.status(200).send(populatedChiTietHoaDonList);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).send({ message: 'Đã xảy ra lỗi khi thêm chi tiết hóa đơn' });
   }
 });

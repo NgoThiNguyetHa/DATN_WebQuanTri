@@ -42,7 +42,7 @@ router.post("/addChiTiet", async function (req, res, next) {
     // console.log(populatedDienThoaiChiTiet);
     res.send(populatedDienThoaiChiTiet);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).send(err); // Trả về lỗi nếu có lỗi xảy ra
   }
 });
@@ -261,7 +261,7 @@ router.put("/updateChiTietDienThoaiFirebase/:id", upload, async (req, res ) => {
       return res.status(200).json({ message: "update successful", data });
     }
   }catch(err){
-    console.log(err)
+    // console.log(err)
     return res.status(500).json({message: err.message})
   }
 })
