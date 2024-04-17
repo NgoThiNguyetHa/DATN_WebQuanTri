@@ -102,7 +102,7 @@ mongoose.connect(mongoURL)
 cron.schedule('0 0 * * *', async () => {
   try {
     // Gọi API cập nhật trạng thái voucher
-    const response = await axios.put('http://localhost:8686/uudais/updateExpiredStatus');
+    const response = await axios.put('https://datn-webquantri.onrender.com/uudais/updateExpiredStatus');
 
   } catch (error) {
   }
