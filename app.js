@@ -92,10 +92,10 @@ app.use(bodyParser.json())
 const mongoURL= 'mongodb+srv://hoanglong180903:tVppUteM4IrqkvDv@cluster0.2gdloo3.mongodb.net/MyNodejsApp'
 mongoose.connect(mongoURL)
 .then(() => {
-  // console.log("connection successfully")
+  console.log("connection successfully")
 })
 .catch((error) => {
-  // console.log("Error connecting to database")
+  console.log("Error connecting to database")
 });
 
 // Lập lịch chạy hằng ngày vào lúc 00:01 để cập nhật trạng thái của voucher
@@ -127,5 +127,5 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 const port = process.env.PORT || 8686;
 app.listen(port, () => {
-  // console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
