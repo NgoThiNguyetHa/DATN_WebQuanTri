@@ -8,7 +8,7 @@
 
   "scripts": {
 
-    "start": "nodemon ./bin/www"
+    "start": "node ./bin/www"
 
   },
 
